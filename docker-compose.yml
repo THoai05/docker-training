@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  web-backend:
+    build: ./config/backend
+    container_name: web-backend
+    ports:
+      - 8080:80
+    volumes:
+      - ./sources:/var/www/html
+      - ./config/backend/php.ini:/usr/local/etc/php/php.ini
+      - ./config/httpd_security.conf:/etc/apache2/conf-available/security.conf
+    working_dir: /var/www/html
+    environment:
+      APP_ENV: local
+    depends_on:
+      - web-mysql
+    restart: always
+
+  web-mysql:
+    image: mysql:8.0
+    container_name: web-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app_web1
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  web-redis:
+    image: redis:7
+    container_name: web-redis
+    ports:
+      - "6379:6379"
+
+  web-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: web-phpmyadmin
+    environment:
+      PMA_HOST: web-mysql
+      PMA_PORT: 3306
+    ports:
+      - "8081:80"
+    depends_on:
+      - web-mysql
+
+volumes:
+  mysql-data:
