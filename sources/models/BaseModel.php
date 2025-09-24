@@ -2,39 +2,32 @@
 require_once 'configs/database.php';
 
 abstract class BaseModel {
-    // Database connection
     protected static $_connection;
 
     public function __construct() {
-
         if (!isset(self::$_connection)) {
-            self::$_connection = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT);
-            if (self::$_connection->connect_errno) {
-                printf("Connect failed");
-                exit();
+            self::$_connection = mysqli_connect(
+                DB_HOST,
+                DB_USER,
+                DB_PASSWORD,
+                DB_NAME,
+                DB_PORT
+            );
+
+            if (mysqli_connect_errno()) {
+                die("Connect failed: " . mysqli_connect_error());
             }
         }
-
     }
 
-    /**
-     * Query in database
-     * @param $sql
-     */
     protected function query($sql) {
-
-        $result = self::$_connection->query($sql);
-        return $result;
+        return self::$_connection->query($sql);
     }
 
-    /**
-     * Select statement
-     * @param $sql
-     */
     protected function select($sql) {
         $result = $this->query($sql);
         $rows = [];
-        if (!empty($result)) {
+        if ($result) {
             while ($row = $result->fetch_assoc()) {
                 $rows[] = $row;
             }
@@ -42,33 +35,16 @@ abstract class BaseModel {
         return $rows;
     }
 
-    /**
-     * Delete statement
-     * @param $sql
-     * @return mixed
-     */
     protected function delete($sql) {
-        $result = $this->query($sql);
-        return $result;
+        return $this->query($sql);
     }
 
-    /**
-     * Update statement
-     * @param $sql
-     * @return mixed
-     */
+    
     protected function update($sql) {
-        $result = $this->query($sql);
-        return $result;
+        return $this->query($sql);
     }
 
-    /**
-     * Insert statement
-     * @param $sql
-     */
     protected function insert($sql) {
-        $result = $this->query($sql);
-        return $result;
+        return $this->query($sql);
     }
-
 }

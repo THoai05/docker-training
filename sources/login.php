@@ -1,5 +1,10 @@
 <?php
 // Start the session
+require_once __DIR__ . '/configs/redis.php';
+require_once __DIR__ . '/sessions/SessionHandlerRedis.php';
+
+$handler = new SessionHandlerRedis($redis);
+session_set_save_handler($handler, true);
 session_start();
 
 require_once 'models/UserModel.php';
