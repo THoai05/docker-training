@@ -2,6 +2,7 @@
 // Start the session
 require_once __DIR__ . '/configs/redis.php';
 require_once __DIR__ . '/sessions/SessionHandlerRedis.php';
+require_once __DIR__ . '/helpers/Csrf.php';
 
 $handler = new SessionHandlerRedis($redis);
 session_set_save_handler($handler, true);
@@ -12,6 +13,12 @@ $userModel = new UserModel();
 
 
 if (!empty($_POST['submit'])) {
+    // Kiểm tra CSRF
+    if (!Csrf::verifyToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['message'] = "Invalid CSRF token, please try again.";
+        header("Location: login.php");
+        exit;
+    }
     $users = [
         'username' => $_POST['username'],
         'password' => $_POST['password']
@@ -23,34 +30,43 @@ if (!empty($_POST['submit'])) {
 
         $_SESSION['message'] = 'Login successful';
         header('location: list_users.php');
-    }else {
+    } else {
         //Login failed
         $_SESSION['message'] = 'Login failed';
     }
-
 }
 
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>User form</title>
     <?php include 'views/meta.php' ?>
 </head>
+
 <body>
-<?php include 'views/header.php'?>
+    <?php include 'views/header.php' ?>
 
     <div class="container">
         <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-            <div class="panel panel-info" >
+            <div class="panel panel-info">
                 <div class="panel-heading">
                     <div class="panel-title">Login</div>
                     <div style="float:right; font-size: 80%; position: relative; top:-10px"><a href="#">Forgot password?</a></div>
                 </div>
 
-                <div style="padding-top:30px" class="panel-body" >
+                <div style="padding-top:30px" class="panel-body">
                     <form method="post" class="form-horizontal" role="form">
-
+                        <?php echo Csrf::inputField(); ?>
+                        <?php if (!empty($_SESSION['message'])): ?>
+                            <div class="alert alert-danger">
+                                <?php
+                                echo htmlspecialchars($_SESSION['message']);
+                                unset($_SESSION['message']);
+                                ?>
+                            </div>
+                        <?php endif; ?>
                         <div class="margin-bottom-25 input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                             <input id="login-username" type="text" class="form-control" name="username" value="" placeholder="username or email">
@@ -65,7 +81,6 @@ if (!empty($_POST['submit'])) {
                             <input type="checkbox" tabindex="3" class="" name="remember" id="remember">
                             <label for="remember"> Remember Me</label>
                         </div>
-
                         <div class="margin-bottom-25 input-group">
                             <!-- Button -->
                             <div class="col-sm-12 controls">
@@ -76,12 +91,13 @@ if (!empty($_POST['submit'])) {
 
                         <div class="form-group">
                             <div class="col-md-12 control">
-                                    Don't have an account!
-                                    <a href="form_user.php">
-                                        Sign Up Here
-                                    </a>
+                                Don't have an account!
+                                <a href="form_user.php">
+                                    Sign Up Here
+                                </a>
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -89,4 +105,5 @@ if (!empty($_POST['submit'])) {
     </div>
 
 </body>
+
 </html>
