@@ -47,7 +47,6 @@ if (!empty($_POST['submit'])) {
 
 <body>
     <?php include 'views/header.php' ?>
-
     <div class="container">
         <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
             <div class="panel panel-info">
@@ -67,9 +66,13 @@ if (!empty($_POST['submit'])) {
                                 ?>
                             </div>
                         <?php endif; ?>
+
                         <div class="margin-bottom-25 input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                            <input id="login-username" type="text" class="form-control" name="username" value="" placeholder="username or email">
+                            <input id="login-username" type="text" class="form-control" name="username"
+                                value="<?php echo htmlspecialchars($_POST['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>"
+                                placeholder="username or email">
+
                         </div>
 
                         <div class="margin-bottom-25 input-group">

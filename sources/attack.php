@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
 
+<head>
+    <title>CSRF Test</title>
+</head>
+
 <body>
-    <form action="http://localhost:8080/form_user.php" method="POST">
-        <input type="hidden" name="name" value="hacker">
-        <input type="hidden" name="password" value="123456">
-        <input type="hidden" name="submit" value="submit">
-        <button type="submit">Fake Submit</button>
+    <h2>Simulate CSRF Attack</h2>
+    <p>This form tries to delete user ID = 17 without a valid CSRF token.</p>
+
+    <form method="POST" action="http://localhost:8080/delete_user.php">
+        <input type="hidden" name="id" value="17">
+        <input type="hidden" name="csrf_token" value="INVALID_TOKEN">
+        <button type="submit">Send Fake Delete Request</button>
     </form>
 </body>
 
