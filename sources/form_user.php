@@ -52,15 +52,16 @@ if (!empty($_POST['submit'])) {
                 <?php if (!empty($_SESSION['message'])): ?>
                     <div class="alert alert-danger">
                         <?php
-                        echo htmlspecialchars($_SESSION['message']);
+                        echo htmlspecialchars($_SESSION['message'], ENT_QUOTES, 'UTF-8');
                         unset($_SESSION['message']);
                         ?>
                     </div>
                 <?php endif; ?>
-                <input type="hidden" name="id" value="<?php echo $_id ?>">
+                <input type="hidden" name="id" value="<?php echo htmlspecialchars($_id ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="form-group">
                     <label for="name">Name</label>
-                    <input class="form-control" name="name" placeholder="Name" value='<?php if (!empty($user[0]['name'])) echo $user[0]['name'] ?>'>
+                    <input class="form-control" name="name" placeholder="Name"
+                        value="<?php echo htmlspecialchars($user[0]['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
